@@ -1,0 +1,96 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+<div class="container">
+    <h2>Listing: {{item.title}}</h2>
+    <div class="container" style="text-align: center;">
+        <img src="{{item.link}}" width="30%" alt="{{item.title}}">
+    </div>
+    <br>
+    <p><b>Description: </b>{{item.description}}</p>
+    <br>
+    {% if user.username %}
+    <p>
+      {% if added %}
+      <a href="{% url 'removeWatchList' item.id %}"><button class="btn btn-danger">Remove from watchlist</button></a>
+      {% else %}
+      <a href="{% url 'addWatchList' item.id %}"><button class="btn btn-success">Add to watchlist</button></a>
+      {% endif %}
+    </p>
+    <br>
+    {% endif %}
+    <h3>Current Bid: ${{item.price}}</h3>
+    {% if user.username %}
+      {% if owner %}
+        <br>
+        <a href="{% url 'closebid' item.id %}"><button class="btn btn-warning">Close Bid</button></a>
+        <br>
+      {% endif %}
+    {% endif %}
+    <br>
+    <p><b>Details:</b>
+    <ul>
+        <li><b>Owner: </b>{{item.owner}}</li>
+        <li><b>Category: </b>{{item.category}}</li>
+        <li><b>Created on: </b>{{item.time}}</li>
+    </ul>
+    </p>
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{error}}
+      </div>
+    {% endif %}
+    {% if errorgreen %}
+    <div class="alert alert-success" role="alert">
+        {{errorgreen}}
+      </div>
+    {% endif %}
+    {% if user.username %}
+      {% if user.username != item.owner %}
+        <div class="container">
+            <h4>Place your bid:</h4>
+            <form action="{% url 'bidSubmit' item.id %}" method="POST">
+                {% csrf_token %}
+                  <div class="form-row align-items-center">
+                    <div class="col-auto">
+                      <input type="number" class="form-control mb-2" id="inlineFormInput" name="bid" placeholder="Your Bid...">
+                    </div>
+                    <div class="col-auto">
+                      <button type="submit" class="btn btn-primary mb-2">Submit</button>
+                    </div>
+                  </div>
+            </form>
+        </div>
+      {% endif %}
+    <br>
+    <div class="container">
+      <form action="{% url 'commentSubmit' item.id %}" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="exampleFormControlTextarea1"><b>Write a comment:</b></label>
+          <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="comment" placeholder="Write Your Comment Here..." required></textarea>
+        </div>
+        <button class="btn btn-secondary" type="submit">Submit</button>
+      </form>
+    </div>
+    <br>
+    {% endif %}
+    {% if comments %}
+    <h5>Comments:</h5>
+    <div class="container"> 
+          {% for comment in comments %}
+          <div class="card mb-3" style="max-width: 540px;">
+            <div class="row no-gutters">
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">{{comment.user}}</h5>
+                  <p class="card-text">{{comment.comment}}</p>
+                  <p class="card-text"><small class="text-muted">{{comment.time}} UTC</small></p>
+                </div>
+              </div>
+            </div>
+          </div>
+           {% endfor %}         
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
