@@ -1,0 +1,1 @@
+ECommerce auction web application similar to eBay used for selling and buying goods. Number of functionalities such as user registration/authentication, creating listings for items, bidding/auction system, and much more.
